@@ -171,8 +171,9 @@ alias set-headphones='pactl set-sink-port 8 analog-output-headphones'
 alias set-speakers='pactl set-sink-port 8 analog-output-lineout'
 
 # - maintenance
-alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /dev/sdd/fedora32-backup'
 alias clear-errors='sudo rm /var/crash/*'
+alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /run/media/acarlisle/Transcend/fedora32-backup'
+alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-backup --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /'
 
 # functions
 # - cd wrappers
