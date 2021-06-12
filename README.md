@@ -1,2 +1,2 @@
 # bash
-Bash setup.
+Bash setup for Linux.
