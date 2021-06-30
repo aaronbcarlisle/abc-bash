@@ -6,7 +6,7 @@ My personal bash/tmux setup for Linux.
 ---
 
 # Install
-    cd ~ && git clone https://github.com/abcarlisle/abc-bash.git && mv -n ~/abc-bash/*.conf ~/abc-bash/.bash* ~/abc-bash/.profile ~ && rm -rf ~/abc-bash
+    cd ~ && git clone https://github.com/abcarlisle/abc-bash.git && mv -n ~/abc-bash/.tmux.conf ~/abc-bash/.bash* ~/abc-bash/.profile ~; rm -rf ~/abc-bash
 
 ---
 
