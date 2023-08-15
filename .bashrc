@@ -121,10 +121,10 @@ if [ $? -eq 0 ]; then \
   echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
   if [ "$?" -eq "0" ]; then \
     # @4 - Clean repository - nothing to commit
-    echo "'$Green'" $(git branch 2>/dev/null | grep '^*' | cut -s 1-2 --complement); \
+    echo "'$Green'" $(git branch 2>/dev/null | grep '^*' | colrm 1 2); \
   else \
     # @5 - Changes to working tree
-    echo "'$IRed'" $(git branch 2>/dev/null | grep '^*' | cut -s 1-2 --complement); \
+    echo "'$IRed'" $(git branch 2>/dev/null | grep '^*' | colrm 1 2); \
   fi) '$BCyan$PathShort$Color_Off'\$ "; \
 else \
   # @2 - Prompt when not in GIT repo
