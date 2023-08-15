@@ -7,7 +7,7 @@ My personal bash/tmux setup for Linux.
 
 # Install
 
-tmux installation for git-bash (requires [msys64](https://www.msys2.org/) running as **admin**:
+tmux installation for git-bash (requires [msys64](https://www.msys2.org/) running as **admin**):
 
     pacman -S tmux && cd "C:\msys64\usr\bin" && cp -t "C:\Program Files\Git\usr\bin" tmux.exe msys-event*.dll
     
