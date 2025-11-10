@@ -92,7 +92,7 @@ if ($Host.UI.SupportsVirtualTerminal -and (Get-Module -Name PSReadLine)) {
         'reload',
         'mkdirpop',
         'open',
-        'profilehelp',
+        'phelp',
 
         # Editor
         'vim',
@@ -108,7 +108,7 @@ if ($Host.UI.SupportsVirtualTerminal -and (Get-Module -Name PSReadLine)) {
         # Config file editors
         'vimrc',
         'claudemd',
-        'pwsprofile',
+        'profile',
 
         # Navigation shortcuts
         'cddev',
@@ -261,7 +261,7 @@ function Show-ProfileHelp {
     Write-Host "`n${script:BYellow}Config File Editors:${script:Color_Off}"
     Write-Host "  vimrc            - Edit .vimrc"
     Write-Host "  claudemd         - Edit CLAUDE.md"
-    Write-Host "  pwsprofile       - Edit PowerShell profile"
+    Write-Host "  profile       - Edit PowerShell profile"
 
     Write-Host "`n${script:BYellow}Navigation Shortcuts:${script:Color_Off}"
     Write-Host "  cddev            - Go to D:/Dev"
@@ -277,7 +277,7 @@ function Show-ProfileHelp {
     Write-Host "  popd             - Pop location from stack and cd back"
 
     Write-Host "`n${script:BYellow}Profile Info:${script:Color_Off}"
-    Write-Host "  profilehelp      - Show this help message"
+    Write-Host "  phelp      - Show this help message"
     Write-Host ""
 }
 
@@ -392,7 +392,7 @@ function Set-LocationAppData {
 Set-Alias -Name reload -Value Reload-Console
 Set-Alias -Name mkdirpop -Value New-DirectoryAndEnter
 Set-Alias -Name open -Value Open-CurrentDirectory
-Set-Alias -Name profilehelp -Value Show-ProfileHelp
+Set-Alias -Name phelp -Value Show-ProfileHelp
 
 # Vim - using console vim (no alias needed, vim is available in PATH)
 
@@ -407,7 +407,7 @@ Set-Alias -Name claude -Value Start-Claude
 # Config file editors
 Set-Alias -Name vimrc -Value Edit-Vimrc
 Set-Alias -Name claudemd -Value Edit-Claude-MD
-Set-Alias -Name pwsprofile -Value Edit-PowerShell-Profile
+Set-Alias -Name profile -Value Edit-PowerShell-Profile
 
 # Navigation shortcuts
 Set-Alias -Name cddev -Value Set-LocationDev
