@@ -17,7 +17,7 @@ bashrc and tmux config install:
     
 PowerShell 7 Profile install:
 
-    cd ~ && git clone https://github.com/abcarlisle/abc-bash.git && mv ~/abc-bash/Microsoft.PowerShell_profile.ps1 ~/Documents/PowerShell; rm -r -fo ~/abc-bash
+    cd ~ && git clone https://github.com/abcarlisle/abc-bash.git && mv ~/abc-bash/Microsoft.PowerShell_profile.ps1 ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1; rm -r -fo ~/abc-bash
 ---
 
 # Contributions
