@@ -35,7 +35,7 @@ bind '"\e[A": history-search-backward'
 bind '"\e[B": history-search-forward'
 
 # Reset
-Color_Off='\e[0m'       # Text Reset
+Color_Off='\e[0m'      # Text Reset
 
 # Regular Colors
 Black='\e[0;30m'        # Black
@@ -44,7 +44,7 @@ Green='\e[0;32m'        # Green
 Yellow='\e[0;33m'       # Yellow
 Blue='\e[0;34m'         # Blue
 Purple='\e[0;35m'       # Purple
-Cyan='\e[0;36m'         # Cyan
+Cyan='\e[0;36m'        # Cyan
 White='\e[0;37m'        # White
 
 # Bold
@@ -121,10 +121,10 @@ if [ $? -eq 0 ]; then \
   echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
   if [ "$?" -eq "0" ]; then \
     # @4 - Clean repository - nothing to commit
-    echo "'$Green'" $(git branch 2>/dev/null | grep '^*' | cut -c 1-2 -complement); \
+    echo "'$Green'" $(git branch 2>/dev/null | grep '^*' | cut -c 3-); \
   else \
     # @5 - Changes to working tree
-    echo "'$IRed'" $(git branch 2>/dev/null | grep '^*' | cut -c 1-2 -complement); \
+    echo "'$IRed'" $(git branch 2>/dev/null | grep '^*' | cut -c 3-); \
   fi) '$BCyan$PathShort$Color_Off'\$ "; \
 else \
   # @2 - Prompt when not in GIT repo
@@ -144,8 +144,8 @@ alias fgrep='find . | cgrep'
 unset GREP_OPTIONS # GREP_OPTIONS deprecated
 
 # - vim
-alias vim='gvim -v' # so clipboard works
-alias evrc='gvim -v ~/.vimrc'
+#alias vim='gvim -v' # so clipboard works
+#alias evrc='gvim -v ~/.vimrc'
 
 # - bashrc
 alias ebrc='vim ~/.bashrc'
@@ -177,12 +177,14 @@ alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-b
 
 # functions
 # - cd wrappers
+#
 function cdup() {
 	local workingdir=$PWD
 	cd $(printf '%0.s../' $(seq 1 $1 ))
 	echo "${Blue}Moved Up: $1 dir(s) from '$workingdir' to '$PWD'..."
 	ls
 }
+
 alias cdpop='cd "$OLDPWD"'
 
 # Copy and go to the directory
