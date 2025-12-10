@@ -28,11 +28,11 @@ shopt -s histappend
 PROMPT_COMMAND='history -a'
 
 # ctrl-R search history
-stty -ixon
+if [[ $iatest > 0 ]]; then stty -ixon; fi
 
 # enable history regex quick lookup
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
+if [[ $iatest > 0 ]]; then bind '"\e[A": history-search-backward'; fi
+if [[ $iatest > 0 ]]; then bind '"\e[B": history-search-forward'; fi
 
 # Reset
 Color_Off='\e[0m'       # Text Reset
