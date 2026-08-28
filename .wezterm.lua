@@ -34,7 +34,9 @@ end
 -- only a hint, and only applies to WebGpu. prefers the dedicated gpu
 config.webgpu_power_preference = 'HighPerformance'
 
--- this is a ceiling, not a target. setting it above your panel refresh rate
+-- MACHINE SPECIFIC: set this to your panel's refresh rate. 165 matches a
+-- 165hz ultrawide; on a 60hz machine it is harmless (this is a ceiling, not a
+-- target) but the headroom goes unused. raising it above your refresh rate
 -- buys nothing but extra wakeups. default is 60
 config.max_fps = 165
 
