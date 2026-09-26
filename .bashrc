@@ -1,234 +1,190 @@
-#!/bin/bash
-
-# used for conditionalsfor empty input/new command
-iatest=$(expr index "$-" i)
+# shellcheck shell=bash
+# ~/.bashrc
 
 # source global definitions
-if [ -f /etc/bashrc ]; then . /etc/bashrc; fi
+[ -f /etc/bashrc ] && . /etc/bashrc
 
-# update based on window size
-shopt -s checkwinsize
+# ---------------------------------------------------------------------------
+# environment (set before the interactive check so scripts and tools see it)
+# ---------------------------------------------------------------------------
 
-# stupid bell
-if [[ $iatest > 0 ]]; then bind "set bell-style none"; fi
+export EDITOR=vim
+# gvim forks and returns immediately unless given -f, which makes git commit,
+# crontab -e and sudoedit see an empty file; fall back to vim where there is
+# no gvim (e.g. Git Bash)
+if command -v gvim >/dev/null 2>&1; then
+	export VISUAL='gvim -f'
+else
+	export VISUAL=vim
+fi
 
-# auto completion ignore case; more stable than nocaseglob
-if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
+# ---------------------------------------------------------------------------
+# everything below is for interactive shells only
+# ---------------------------------------------------------------------------
+[[ $- != *i* ]] && return
 
-# show history on first tab press
-if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
+# readline settings (bell, completion, arrow-key history search) live in
+# ~/.inputrc so they need no interactive guard
 
+# free up Ctrl-S for forward history search (disables XON/XOFF flow control)
+stty -ixon 2>/dev/null
+
+# ---------------------------------------------------------------------------
 # history
-export HISTCONTROL=erasedups:ignoredups:ignorespace:ignoreboth
-export HISTFILESIZE=10000
-export HISTSIZE=500
+# ---------------------------------------------------------------------------
+export HISTCONTROL=ignoreboth:erasedups   # ignoreboth = ignorespace + ignoredups
+export HISTSIZE=10000                     # entries kept in memory
+export HISTFILESIZE=10000                 # entries kept in ~/.bash_history
+export HISTTIMEFORMAT='%F %T '            # timestamps in `history` output
+shopt -s histappend                       # append to the file, don't overwrite
 
-# async terminal history
-shopt -s histappend
-PROMPT_COMMAND='history -a; __set_prompt'
+# ---------------------------------------------------------------------------
+# colors
+# $'...' stores the real escape byte, so these work in printf, echo and PS1
+# without needing echo -e
+# ---------------------------------------------------------------------------
+Color_Off=$'\e[0m'
+Green=$'\e[0;32m'
+Blue=$'\e[0;34m'
+Cyan=$'\e[0;36m'
+BCyan=$'\e[1;36m'
+IBlack=$'\e[0;90m'
+IRed=$'\e[0;91m'
 
-# ctrl-R search history
-stty -ixon
-
-# enable history regex quick lookup
-bind '"\e[A": history-search-backward'
-bind '"\e[B": history-search-forward'
-
-# Reset
-Color_Off='\e[0m'      # Text Reset
-
-# Regular Colors
-Black='\e[0;30m'        # Black
-Red='\e[0;31m'          # Red
-Green='\e[0;32m'        # Green
-Yellow='\e[0;33m'       # Yellow
-Blue='\e[0;34m'         # Blue
-Purple='\e[0;35m'       # Purple
-Cyan='\e[0;36m'        # Cyan
-White='\e[0;37m'        # White
-
-# Bold
-BBlack='\e[1;30m'       # Black
-BRed='\e[1;31m'         # Red
-BGreen='\e[1;32m'       # Green
-BYellow='\e[1;33m'      # Yellow
-BBlue='\e[1;34m'        # Blue
-BPurple='\e[1;35m'      # Purple
-BCyan='\e[1;36m'        # Cyan
-BWhite='\e[1;37m'       # White
-
-# Underline
-UBlack='\e[4;30m'       # Black
-URed='\e[4;31m'         # Red
-UGreen='\e[4;32m'       # Green
-UYellow='\e[4;33m'      # Yellow
-UBlue='\e[4;34m'        # Blue
-UPurple='\e[4;35m'      # Purple
-UCyan='\e[4;36m'        # Cyan
-UWhite='\e[4;37m'       # White
-
-# Background
-On_Black='\e[40m'       # Black
-On_Red='\e[41m'         # Red
-On_Green='\e[42m'       # Green
-On_Yellow='\e[43m'      # Yellow
-On_Blue='\e[44m'        # Blue
-On_Purple='\e[45m'      # Purple
-On_Cyan='\e[46m'        # Cyan
-On_White='\e[47m'       # White
-
-# High Intensity
-IBlack='\e[0;90m'       # Black
-IRed='\e[0;91m'         # Red
-IGreen='\e[0;92m'       # Green
-IYellow='\e[0;93m'      # Yellow
-IBlue='\e[0;94m'        # Blue
-IPurple='\e[0;95m'      # Purple
-ICyan='\e[0;96m'        # Cyan
-IWhite='\e[0;97m'       # White
-
-# Bold High Intensity
-BIBlack='\e[1;90m'      # Black
-BIRed='\e[1;91m'        # Red
-BIGreen='\e[1;92m'      # Green
-BIYellow='\e[1;93m'     # Yellow
-BIBlue='\e[1;94m'       # Blue
-BIPurple='\e[1;95m'     # Purple
-BICyan='\e[1;96m'       # Cyan
-BIWhite='\e[1;97m'      # White
-
-# High Intensity backgrounds
-On_IBlack='\e[0;100m'   # Black
-On_IRed='\e[0;101m'     # Red
-On_IGreen='\e[0;102m'   # Green
-On_IYellow='\e[0;103m'  # Yellow
-On_IBlue='\e[0;104m'    # Blue
-On_IPurple='\e[0;105m'  # Purple
-On_ICyan='\e[0;106m'    # Cyan
-On_IWhite='\e[0;107m'   # White
-
-# Various variables you might want for your PS1 prompt instead
-Time12h="\T"
-Time12a="\@"
-PathShort="\w"
-PathFull="\W"
-NewLine="\n"
-Jobs="\j"
-
-# git terminal colors and text
+# ---------------------------------------------------------------------------
+# prompt
 # rebuilt before every prompt via PROMPT_COMMAND. every color code sits inside
-# \[ \] so readline knows it takes no screen space; without that it thinks the
-# prompt is ~20 columns wider than it is, which misplaces the cursor after
-# Home, leaves stale text on history recall and wraps at the wrong column.
-# the branch goes in through ${__git_branch} rather than being pasted into PS1
-# so a branch name is never re-expanded as shell code
+# \[ \] so readline knows it takes no screen space. the branch goes in through
+# ${__git_branch} rather than being pasted into PS1 so a branch name is never
+# re-expanded as shell code.
+#
+# PS1 escapes:  \T = 12h time   \w = full path (~ abbreviated)   \W = basename
+# ---------------------------------------------------------------------------
 __set_prompt() {
-	PS1='\['$IBlack'\]'$Time12h'\['$Color_Off'\]'
-	if __git_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); then
-		if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
-			# clean repository - nothing to commit
-			PS1+='\['$Green'\]'
+	PS1='\['"$IBlack"'\]\T\['"$Color_Off"'\]'
+
+	# symbolic-ref works in a fresh repo with no commits; rev-parse covers a
+	# detached HEAD by showing the short hash; both fail outside a repo
+	if __git_branch=$(git symbolic-ref --short -q HEAD 2>/dev/null ||
+	                  git rev-parse --short HEAD 2>/dev/null); then
+		# add -uno to the status call if untracked files shouldn't count as dirty
+		if [[ -z $(git status --porcelain 2>/dev/null) ]]; then
+			PS1+='\['"$Green"'\]'    # clean
 		else
-			# changes to working tree
-			PS1+='\['$IRed'\]'
+			PS1+='\['"$IRed"'\]'     # uncommitted changes
 		fi
-		PS1+=' ${__git_branch} \['$BCyan'\]'$PathShort'\['$Color_Off'\]\$ '
+		PS1+=' ${__git_branch} \['"$BCyan"'\]\w\['"$Color_Off"'\]\$ '
 	else
-		# not in a git repo
-		PS1+=' \['$Cyan'\]'$PathShort'\['$Color_Off'\]\$ '
+		PS1+=' \['"$Cyan"'\]\w\['"$Color_Off"'\]\$ '
 	fi
 }
 
-# defaults
-export EDITOR=vim
-export VISUAL=gvim
+# append to PROMPT_COMMAND instead of overwriting it, so Fedora's vte.sh
+# (new terminal tabs open in the current directory) keeps working; the guard
+# stops `sbrc` from adding it again on every re-source
+if [[ $PROMPT_COMMAND != *__set_prompt* ]]; then
+	PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a; __set_prompt"
+fi
 
+# ---------------------------------------------------------------------------
 # aliases
+# ---------------------------------------------------------------------------
 
 # - grep
-alias cgrep='grep --color=always -n -r'
-alias hgrep='history | cgrep'
-alias fgrep='find . | cgrep'
-unset GREP_OPTIONS # GREP_OPTIONS deprecated
+# no -r on the piped versions: grep -r with no file searches the current
+# directory and ignores stdin
+alias cgrep='grep --color=auto -rn'
+alias hgrep='history | grep --color=auto'
+alias findgrep='find . | grep --color=auto'
 
 # - vim
-alias vim='vim -v' # so clipboard works
-alias evrc='vim -v ~/.vimrc'
-alias evimrc='vim -v ~/.vimrc'
+# on Fedora, vimx is the terminal vim built with clipboard support
+command -v vimx >/dev/null 2>&1 && alias vim='vimx'
+alias evrc='vim ~/.vimrc'
+alias evimrc='vim ~/.vimrc'
 
 # - bashrc
 alias ebrc='vim ~/.bashrc'
 alias ebashrc='vim ~/.bashrc'
-alias sbrc='source ~/.bashrc && echo -e "${Cyan}Sourced ~/.bashrc..."'
-alias sbashrc='source ~/.bashrc && echo -e "${Cyan}Sourced ~/.bashrc..."'
+alias sbrc='source ~/.bashrc && printf "%sSourced ~/.bashrc...%s\n" "$Cyan" "$Color_Off"'
+alias sbashrc='sbrc'
 
-# - bashrc
+# - claude
 alias cld='claude'
 alias cldanger='claude --dangerously-skip-permissions' # --channels plugin:telegram@claude-plugins-official'
-
-# navigation
-alias cddev='cd E:/Dev'
-alias cdr='cd E:/Dev/repos'
-alias cdrepos='cd E:/Dev/repos'
-alias cdp='cd E:/Dev/projects'
-alias cdprojects='cd E:/Dev/projects'
 
 # - shortcuts
 alias c='clear'
 alias h='history'
-alias dnf='sudo dnf'
-alias null=’/dev/null’
-alias echo='echo -e'
-alias fbrowser='nautilus --browser'
-alias open='xdg-open'
-alias cd..='cd ..' # for typos
+alias cd..='cd ..'   # for typos
+alias cdpop='cd -'
 
-# time and date
-alias time='timedatectl'
-alias date='date "+%Y-%m-%d %A %T %Z"'
+# - time and date (renamed so the `time` keyword and `date` still work)
+alias now='date "+%Y-%m-%d %A %T %Z"'
 
 # - system
-alias diskspace="du -S | sort -n -r |more"
-alias set-headphones='pactl set-sink-port 8 analog-output-headphones'
-alias set-speakers='pactl set-sink-port 8 analog-output-lineout'
+alias diskspace='du -h --max-depth=1 2>/dev/null | sort -rh | head -n 20'
 
-# - maintenance
-alias clear-errors='sudo rm /var/crash/*'
-# alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /run/media/acarlisle/Transcend/fedora32-backup'
-# alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-backup --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /'
+# ---------------------------------------------------------------------------
+# platform-specific
+# ---------------------------------------------------------------------------
+case "$OSTYPE" in
+	msys*|cygwin*)
+		# Git Bash on Windows
+		# CDPATH lets you `cd <repo-name>` from anywhere
+		CDPATH=.:/e/Dev:/e/Dev/repos:/e/Dev/projects
 
+		alias cddev='cd /e/Dev'
+		alias cdr='cd /e/Dev/repos'
+		alias cdrepos='cd /e/Dev/repos'
+		alias cdp='cd /e/Dev/projects'
+		alias cdprojects='cd /e/Dev/projects'
+		alias open='start'
+		;;
+	linux*)
+		alias dnf='sudo dnf'
+		alias fbrowser='nautilus --browser'
+		alias open='xdg-open'
+		alias tdc='timedatectl'
+
+		# @DEFAULT_SINK@ instead of a hard-coded index that changes between boots
+		alias set-headphones='pactl set-sink-port @DEFAULT_SINK@ analog-output-headphones'
+		alias set-speakers='pactl set-sink-port @DEFAULT_SINK@ analog-output-lineout'
+
+		# Fedora records crashes via systemd-coredump, not /var/crash
+		alias crashes='coredumpctl list'
+		;;
+esac
+
+# ---------------------------------------------------------------------------
 # functions
-# - cd wrappers
-#
-function cdup() {
-	local workingdir=$PWD
-	cd $(printf '%0.s../' $(seq 1 $1 ))
-	echo "${Blue}Moved Up: $1 dir(s) from '$workingdir' to '$PWD'..."
+# ---------------------------------------------------------------------------
+
+# move up N directories (default 1) and list the result
+cdup() {
+	local n=${1:-1} from=$PWD
+	if [[ ! $n =~ ^[0-9]+$ ]] || (( n < 1 )); then
+		printf 'usage: cdup [N]\n' >&2
+		return 1
+	fi
+	cd "$(printf '../%.0s' $(seq "$n"))" || return
+	printf '%sMoved up %s dir(s): %s -> %s%s\n' "$Blue" "$n" "$from" "$PWD" "$Color_Off"
 	ls
 }
 
-alias cdpop='cd "$OLDPWD"'
-
-# Copy and go to the directory
-function cpop() {
-	if [ -d "$2" ]; then
-		cp $1 $2 && cd $2
-	else
-		cp $1 $2
-	fi
+# copy (files or directories, one or more sources), then cd into the
+# destination if it is a directory
+cpop() {
+	cp -r -- "$@" && [[ -d ${!#} ]] && cd -- "${!#}"
 }
 
-# Move and go to the directory
-function mvpop() {
-	if [ -d "$2" ];then
-		mv $1 $2 && cd $2
-	else
-		mv $1 $2
-	fi
+# move one or more sources, then cd into the destination if it is a directory
+mvpop() {
+	mv -- "$@" && [[ -d ${!#} ]] && cd -- "${!#}"
 }
 
-# Create and go to the directory
-function mkdirpop() {
-	mkdir -p $1
-	cd $1
+# create a directory (with parents) and cd into it
+mkdirpop() {
+	mkdir -p -- "$1" && cd -- "$1"
 }
+alias mkcd='mkdirpop'
