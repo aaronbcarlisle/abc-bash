@@ -82,7 +82,11 @@ __set_prompt() {
 # append to PROMPT_COMMAND instead of overwriting it, so Fedora's vte.sh
 # (new terminal tabs open in the current directory) keeps working; the guard
 # stops `sbrc` from adding it again on every re-source
-if [[ $PROMPT_COMMAND != *__set_prompt* ]]; then
+if [[ $(declare -p PROMPT_COMMAND 2>/dev/null) == 'declare -a'* ]]; then
+	if [[ ! ${PROMPT_COMMAND[*]} =~ __set_prompt ]]; then
+		PROMPT_COMMAND+=('history -a; __set_prompt')
+	fi
+elif [[ $PROMPT_COMMAND != *__set_prompt* ]]; then
 	PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }history -a; __set_prompt"
 fi
 
