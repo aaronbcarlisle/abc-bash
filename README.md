@@ -8,7 +8,7 @@ My personal bash/tmux setup for Linux.
 # Install
 
 ```bash
-cd ~ && git clone https://github.com/abcarlisle/abc-bash.git && mv -n ~/abc-bash/.tmux.conf ~/abc-bash/.bash* ~/abc-bash/.profile ~; rm -rf ~/abc-bash
+cd ~ && git clone https://github.com/aaronbcarlisle/abc-bash.git && mv -n ~/abc-bash/.tmux.conf ~/abc-bash/.bash* ~/abc-bash/.profile ~; rm -rf ~/abc-bash
 ```
 
 WezTerm config install (optional, works on Windows and Linux):
