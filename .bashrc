@@ -133,7 +133,13 @@ case "$OSTYPE" in
 		# Git Bash on Windows
 		# CDPATH lets you `cd <repo-name>` from anywhere
 		CDPATH=.:/e/Dev:/e/Dev/repos:/e/Dev/projects
-
+		if [ -d E:/Dev ]; then
+  			alias cddev='cd E:/Dev'
+  			alias cdr='cd E:/Dev/repos'
+  			alias cdrepos='cd E:/Dev/repos'
+  			alias cdp='cd E:/Dev/projects'
+  			alias cdprojects='cd E:/Dev/projects'
+		fi
 		alias cddev='cd /e/Dev'
 		alias cdr='cd /e/Dev/repos'
 		alias cdrepos='cd /e/Dev/repos'
