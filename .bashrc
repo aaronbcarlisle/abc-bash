@@ -167,15 +167,11 @@ alias cld='claude'
 alias cldanger='claude --dangerously-skip-permissions' # --channels plugin:telegram@claude-plugins-official'
 
 # navigation
-alias cdxrp='cd D:/FFXIV/Dev/xrp-dev/ffxiv-raid-planner'
 alias cddev='cd E:/Dev'
-alias cdref='cd F:/code'
 alias cdr='cd E:/Dev/repos'
 alias cdrepos='cd E:/Dev/repos'
 alias cdp='cd E:/Dev/projects'
 alias cdprojects='cd E:/Dev/projects'
-alias cdlod='cd E:/Dev/LegendOfDragoon'
-alias cdserapis='cd E:/Dev/projects/serapis'
 
 # - shortcuts
 alias c='clear'
@@ -198,8 +194,8 @@ alias set-speakers='pactl set-sink-port 8 analog-output-lineout'
 
 # - maintenance
 alias clear-errors='sudo rm /var/crash/*'
-alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /run/media/acarlisle/Transcend/fedora32-backup'
-alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-backup --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /'
+# alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /run/media/acarlisle/Transcend/fedora32-backup'
+# alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-backup --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /'
 
 # functions
 # - cd wrappers
