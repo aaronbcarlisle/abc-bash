@@ -186,7 +186,10 @@ cpop() {
 
 # move one or more sources, then cd into the destination if it is a directory
 mvpop() {
-	mv -- "$@" && [[ -d ${!#} ]] && cd -- "${!#}"
+	cp -r -- "$@" || return
+if [[ -d ${!#} ]]; then
+	cd -- "${!#}"
+fi
 }
 
 # create a directory (with parents) and cd into it
