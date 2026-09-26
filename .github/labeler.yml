@@ -1,0 +1,30 @@
+# PR labels applied by .github/workflows/labeler.yml. changed-files globs
+# match paths from the repo root (dotfiles included); head-branch entries are
+# regexps on the PR's branch name.
+
+bash:
+  - changed-files:
+      - any-glob-to-any-file: [.bashrc, .bash_profile, .profile, .inputrc, inputrc]
+
+tmux:
+  - changed-files:
+      - any-glob-to-any-file: .tmux.conf
+
+wezterm:
+  - changed-files:
+      - any-glob-to-any-file: .wezterm.lua
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: '.github/**'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file: [README.md, LICENSE]
+  - head-branch: ['^docs/']
+
+enhancement:
+  - head-branch: ['^feat/', '^feature/']
+
+bug:
+  - head-branch: ['^fix/']
