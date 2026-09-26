@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# used for conditionals for empty input/new command
+# used for conditionalsfor empty input/new command
 iatest=$(expr index "$-" i)
 
 # source global definitions
@@ -10,7 +10,7 @@ if [ -f /etc/bashrc ]; then . /etc/bashrc; fi
 shopt -s checkwinsize
 
 # stupid bell
-if [[ $iatest > 0 ]]; then bind "set bell-style visible"; fi
+if [[ $iatest > 0 ]]; then bind "set bell-style none"; fi
 
 # auto completion ignore case; more stable than nocaseglob
 if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
@@ -19,23 +19,23 @@ if [[ $iatest > 0 ]]; then bind "set completion-ignore-case on"; fi
 if [[ $iatest > 0 ]]; then bind "set show-all-if-ambiguous On"; fi
 
 # history
-export HISTCONTROL=erasedups:ignoreboth
+export HISTCONTROL=erasedups:ignoredups:ignorespace:ignoreboth
 export HISTFILESIZE=10000
 export HISTSIZE=500
 
 # async terminal history
 shopt -s histappend
-PROMPT_COMMAND='history -a'
+PROMPT_COMMAND='history -a; __set_prompt'
 
 # ctrl-R search history
-if [[ $iatest > 0 ]]; then stty -ixon; fi
+stty -ixon
 
 # enable history regex quick lookup
-if [[ $iatest > 0 ]]; then bind '"\e[A": history-search-backward'; fi
-if [[ $iatest > 0 ]]; then bind '"\e[B": history-search-forward'; fi
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
 
 # Reset
-Color_Off='\e[0m'       # Text Reset
+Color_Off='\e[0m'      # Text Reset
 
 # Regular Colors
 Black='\e[0;30m'        # Black
@@ -44,7 +44,7 @@ Green='\e[0;32m'        # Green
 Yellow='\e[0;33m'       # Yellow
 Blue='\e[0;34m'         # Blue
 Purple='\e[0;35m'       # Purple
-Cyan='\e[0;36m'         # Cyan
+Cyan='\e[0;36m'        # Cyan
 White='\e[0;37m'        # White
 
 # Bold
@@ -57,6 +57,26 @@ BPurple='\e[1;35m'      # Purple
 BCyan='\e[1;36m'        # Cyan
 BWhite='\e[1;37m'       # White
 
+# Underline
+UBlack='\e[4;30m'       # Black
+URed='\e[4;31m'         # Red
+UGreen='\e[4;32m'       # Green
+UYellow='\e[4;33m'      # Yellow
+UBlue='\e[4;34m'        # Blue
+UPurple='\e[4;35m'      # Purple
+UCyan='\e[4;36m'        # Cyan
+UWhite='\e[4;37m'       # White
+
+# Background
+On_Black='\e[40m'       # Black
+On_Red='\e[41m'         # Red
+On_Green='\e[42m'       # Green
+On_Yellow='\e[43m'      # Yellow
+On_Blue='\e[44m'        # Blue
+On_Purple='\e[45m'      # Purple
+On_Cyan='\e[46m'        # Cyan
+On_White='\e[47m'       # White
+
 # High Intensity
 IBlack='\e[0;90m'       # Black
 IRed='\e[0;91m'         # Red
@@ -67,25 +87,57 @@ IPurple='\e[0;95m'      # Purple
 ICyan='\e[0;96m'        # Cyan
 IWhite='\e[0;97m'       # White
 
+# Bold High Intensity
+BIBlack='\e[1;90m'      # Black
+BIRed='\e[1;91m'        # Red
+BIGreen='\e[1;92m'      # Green
+BIYellow='\e[1;93m'     # Yellow
+BIBlue='\e[1;94m'       # Blue
+BIPurple='\e[1;95m'     # Purple
+BICyan='\e[1;96m'       # Cyan
+BIWhite='\e[1;97m'      # White
+
+# High Intensity backgrounds
+On_IBlack='\e[0;100m'   # Black
+On_IRed='\e[0;101m'     # Red
+On_IGreen='\e[0;102m'   # Green
+On_IYellow='\e[0;103m'  # Yellow
+On_IBlue='\e[0;104m'    # Blue
+On_IPurple='\e[0;105m'  # Purple
+On_ICyan='\e[0;106m'    # Cyan
+On_IWhite='\e[0;107m'   # White
+
 # Various variables you might want for your PS1 prompt instead
 Time12h="\T"
+Time12a="\@"
 PathShort="\w"
+PathFull="\W"
+NewLine="\n"
+Jobs="\j"
 
 # git terminal colors and text
-export PS1=$IBlack$Time12h$Color_Off'$(git branch &>/dev/null;\
-if [ $? -eq 0 ]; then \
-  echo "$(echo `git status` | grep "nothing to commit" > /dev/null 2>&1; \
-  if [ "$?" -eq "0" ]; then \
-    # @4 - Clean repository - nothing to commit
-    echo "'$Green'" $(git branch 2>/dev/null | grep '^*' | cut -c 3-); \
-  else \
-    # @5 - Changes to working tree
-    echo "'$IRed'" $(git branch 2>/dev/null | grep '^*' | cut -c 3-); \
-  fi) '$BCyan$PathShort$Color_Off'\$ "; \
-else \
-  # @2 - Prompt when not in GIT repo
-  echo " '$Cyan$PathShort$Color_Off'\$ "; \
-fi)'
+# rebuilt before every prompt via PROMPT_COMMAND. every color code sits inside
+# \[ \] so readline knows it takes no screen space; without that it thinks the
+# prompt is ~20 columns wider than it is, which misplaces the cursor after
+# Home, leaves stale text on history recall and wraps at the wrong column.
+# the branch goes in through ${__git_branch} rather than being pasted into PS1
+# so a branch name is never re-expanded as shell code
+__set_prompt() {
+	PS1='\['$IBlack'\]'$Time12h'\['$Color_Off'\]'
+	if __git_branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null); then
+		if [ -z "$(git status --porcelain 2>/dev/null)" ]; then
+			# clean repository - nothing to commit
+			PS1+='\['$Green'\]'
+		else
+			# changes to working tree
+			PS1+='\['$IRed'\]'
+		fi
+		PS1+=' ${__git_branch} \['$BCyan'\]'$PathShort'\['$Color_Off'\]\$ '
+	else
+		# not in a git repo
+		PS1+=' \['$Cyan'\]'$PathShort'\['$Color_Off'\]\$ '
+	fi
+}
 
 # defaults
 export EDITOR=vim
@@ -96,16 +148,40 @@ export VISUAL=gvim
 # - grep
 alias cgrep='grep --color=always -n -r'
 alias hgrep='history | cgrep'
-alias findgrep='find . | cgrep'
+alias fgrep='find . | cgrep'
+unset GREP_OPTIONS # GREP_OPTIONS deprecated
+
+# - vim
+alias vim='vim -v' # so clipboard works
+alias evrc='vim -v ~/.vimrc'
+alias evimrc='vim -v ~/.vimrc'
 
 # - bashrc
 alias ebrc='vim ~/.bashrc'
+alias ebashrc='vim ~/.bashrc'
 alias sbrc='source ~/.bashrc && echo -e "${Cyan}Sourced ~/.bashrc..."'
+alias sbashrc='source ~/.bashrc && echo -e "${Cyan}Sourced ~/.bashrc..."'
+
+# - bashrc
+alias cld='claude'
+alias cldanger='claude --dangerously-skip-permissions' # --channels plugin:telegram@claude-plugins-official'
+
+# navigation
+alias cdxrp='cd D:/FFXIV/Dev/xrp-dev/ffxiv-raid-planner'
+alias cddev='cd E:/Dev'
+alias cdref='cd F:/code'
+alias cdr='cd E:/Dev/repos'
+alias cdrepos='cd E:/Dev/repos'
+alias cdp='cd E:/Dev/projects'
+alias cdprojects='cd E:/Dev/projects'
+alias cdlod='cd E:/Dev/LegendOfDragoon'
+alias cdserapis='cd E:/Dev/projects/serapis'
 
 # - shortcuts
 alias c='clear'
 alias h='history'
 alias dnf='sudo dnf'
+alias null=’/dev/null’
 alias echo='echo -e'
 alias fbrowser='nautilus --browser'
 alias open='xdg-open'
@@ -117,6 +193,13 @@ alias date='date "+%Y-%m-%d %A %T %Z"'
 
 # - system
 alias diskspace="du -S | sort -n -r |more"
+alias set-headphones='pactl set-sink-port 8 analog-output-headphones'
+alias set-speakers='pactl set-sink-port 8 analog-output-lineout'
+
+# - maintenance
+alias clear-errors='sudo rm /var/crash/*'
+alias backup-system='sudo rsync -aAXv / --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /run/media/acarlisle/Transcend/fedora32-backup'
+alias restore-system='sudo rsync -aAXv /run/media/acarlisle/Transcend/fedora32-backup --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found"} /'
 
 # functions
 # - cd wrappers
