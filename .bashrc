@@ -135,20 +135,20 @@ alias diskspace='du -h --max-depth=1 2>/dev/null | sort -rh | head -n 20'
 case "$OSTYPE" in
 	msys*|cygwin*)
 		# Git Bash on Windows
-		# CDPATH lets you `cd <repo-name>` from anywhere
-		CDPATH=.:/e/Dev:/e/Dev/repos:/e/Dev/projects
 		if [ -d E:/Dev ]; then
-  			alias cddev='cd E:/Dev'
-  			alias cdr='cd E:/Dev/repos'
-  			alias cdrepos='cd E:/Dev/repos'
-  			alias cdp='cd E:/Dev/projects'
-  			alias cdprojects='cd E:/Dev/projects'
+			# cygpath gives E:/Dev's mount path (/e/Dev in Git Bash,
+			# /cygdrive/e/Dev in Cygwin); CDPATH needs it because its entries
+			# are colon-separated
+			__dev=$(cygpath -u E:/Dev)
+			# CDPATH lets you `cd <repo-name>` from anywhere
+			CDPATH=.:$__dev:$__dev/repos:$__dev/projects
+			alias cddev="cd $__dev"
+			alias cdr="cd $__dev/repos"
+			alias cdrepos="cd $__dev/repos"
+			alias cdp="cd $__dev/projects"
+			alias cdprojects="cd $__dev/projects"
+			unset __dev
 		fi
-		alias cddev='cd /e/Dev'
-		alias cdr='cd /e/Dev/repos'
-		alias cdrepos='cd /e/Dev/repos'
-		alias cdp='cd /e/Dev/projects'
-		alias cdprojects='cd /e/Dev/projects'
 		alias open='start'
 		;;
 	linux*)
