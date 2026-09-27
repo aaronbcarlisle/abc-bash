@@ -1,0 +1,24 @@
+# ~/.inputrc
+# keep the system defaults (Home/End/Delete key bindings etc.); a personal
+# ~/.inputrc otherwise replaces /etc/inputrc entirely
+$include /etc/inputrc
+
+# no terminal bell
+set bell-style none
+
+# case-insensitive tab completion
+set completion-ignore-case on
+
+# list all matches on the first tab press instead of the second
+set show-all-if-ambiguous on
+
+# color completion lists like ls does, and add / to symlinked directories
+set colored-stats on
+set mark-symlinked-directories on
+
+# up/down arrows search history for lines starting with what you've typed
+# (both escape forms, since some terminals send \eO instead of \e[)
+"\e[A": history-search-backward
+"\e[B": history-search-forward
+"\eOA": history-search-backward
+"\eOB": history-search-forward
