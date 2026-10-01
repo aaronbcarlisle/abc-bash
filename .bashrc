@@ -23,8 +23,12 @@ fi
 # ---------------------------------------------------------------------------
 [[ $- != *i* ]] && return
 
-# readline settings (bell, completion, arrow-key history search) live in
-# ~/.inputrc so they need no interactive guard
+# readline settings (completion, arrow-key history search) live in ~/.inputrc,
+# installed from this repo's inputrc. the bell is also turned off here because
+# Git for Windows' /etc/inputrc sets "bell-style visible", which flips the
+# screen to reverse video (a white flash) on every invalid key; this keeps it
+# off even when ~/.inputrc is missing or out of date
+bind 'set bell-style none' 2>/dev/null
 
 # free up Ctrl-S for forward history search (disables XON/XOFF flow control)
 stty -ixon 2>/dev/null

@@ -48,6 +48,15 @@ config.animation_fps = 1
 config.cursor_blink_ease_in = 'Constant'
 config.cursor_blink_ease_out = 'Constant'
 
+-- no bell: silence the system beep and make the visual bell a no-op, so
+-- invalid input (bad completion, backspace on an empty line) doesn't flash.
+-- bash's readline "visible" bell is a separate flash; .bashrc turns it off
+config.audible_bell = 'Disabled'
+config.visual_bell = {
+	fade_in_duration_ms = 0,
+	fade_out_duration_ms = 0,
+}
+
 -- transparency and the win11 backdrops force per-frame DWM compositing, which
 -- is a real cost on windows. leave these alone
 config.window_background_opacity = 1.0
