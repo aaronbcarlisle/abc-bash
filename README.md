@@ -1,7 +1,7 @@
 ABC Bash
 ================================
 
-My personal bash, readline and tmux setup for Linux, WSL and Git Bash on
+My personal bash and readline setup for Linux, WSL and Git Bash on
 Windows, plus an optional WezTerm config.
 
 ---
@@ -14,7 +14,6 @@ Windows, plus an optional WezTerm config.
 | `.bash_profile`| `~/.bash_profile`| Login shells: sources `~/.profile`, then `~/.bashrc`                         |
 | `.profile`     | `~/.profile`     | Adds `~/usr/bin` and `~/usr/lib` to `PATH` and the library search paths      |
 | `inputrc`      | `~/.inputrc`     | Readline: no bell, case-insensitive completion, arrow-key history search     |
-| `.tmux.conf`   | `~/.tmux.conf`   | `Ctrl-Space` prefix, vi copy mode, `hjkl` panes, system-clipboard yank       |
 | `.wezterm.lua` | `~/.wezterm.lua` | Optional WezTerm config (Windows and Linux); opens Git Bash on Windows       |
 
 ---
@@ -66,9 +65,6 @@ are out of date.
 
 ## Notes
 
-- **Clipboard in tmux:** `y` in copy mode copies to the system clipboard using
-  `clip.exe` (WSL), `pbcopy` (macOS), `wl-copy` (Wayland) or `xclip` (X11),
-  whichever is installed. Without any of them it copies to tmux's own buffer.
 - **Windows:** run the installer from Git Bash. The WezTerm config starts Git
   Bash as a login shell, so `~/.bash_profile` and `~/.bashrc` both load.
 - **Machine-specific changes:** the installer won't overwrite a file that

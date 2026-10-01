@@ -7,7 +7,7 @@
 #   sh ~/abc-bash/install.sh [--force] [--wezterm]
 #
 # Copies the dotfiles from this checkout into $HOME:
-#   .bashrc .bash_profile .profile .tmux.conf, and inputrc as .inputrc
+#   .bashrc .bash_profile .profile, and inputrc as .inputrc
 #   (.wezterm.lua too with --wezterm)
 #
 # Idempotent and safe to re-run. A file already identical to the repo copy is
@@ -49,7 +49,7 @@ done
 
 # --- find the source --------------------------------------------------------
 SRC=$(CDPATH='' cd -- "$(dirname -- "$0")" 2>/dev/null && pwd -P) || SRC=""
-if [ -z "$SRC" ] || [ ! -f "$SRC/.bashrc" ] || [ ! -f "$SRC/inputrc" ] || [ ! -f "$SRC/.tmux.conf" ]; then
+if [ -z "$SRC" ] || [ ! -f "$SRC/.bashrc" ] || [ ! -f "$SRC/inputrc" ]; then
     die "Run install.sh from an abc-bash checkout: git clone https://github.com/aaronbcarlisle/abc-bash.git ~/abc-bash && sh ~/abc-bash/install.sh"
 fi
 [ -n "${HOME:-}" ] && [ -d "$HOME" ] || die "\$HOME is not set to a directory."
@@ -91,7 +91,6 @@ install_file .bashrc .bashrc
 install_file .bash_profile .bash_profile
 install_file .profile .profile
 install_file inputrc .inputrc
-install_file .tmux.conf .tmux.conf
 if [ "$WEZTERM" = 1 ]; then
     install_file .wezterm.lua .wezterm.lua
 fi

@@ -6,10 +6,6 @@ bash:
   - changed-files:
       - any-glob-to-any-file: [.bashrc, .bash_profile, .profile, .inputrc, inputrc, install.sh]
 
-tmux:
-  - changed-files:
-      - any-glob-to-any-file: .tmux.conf
-
 wezterm:
   - changed-files:
       - any-glob-to-any-file: .wezterm.lua
