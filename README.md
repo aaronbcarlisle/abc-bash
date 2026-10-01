@@ -67,9 +67,9 @@ are out of date.
 
 - **Windows:** run the installer from Git Bash. The WezTerm config starts Git
   Bash as a login shell, so `~/.bash_profile` and `~/.bashrc` both load.
-- **Machine-specific changes:** the installer won't overwrite a file that
-  differs unless you pass `--force`, so local edits are safe until you choose to
-  replace them.
+- **Machine-specific changes:** put them in `~/.bashrc.local`, which `.bashrc`
+  sources last and the installer never touches. The installer also won't
+  overwrite a file that differs unless you pass `--force`.
 
 ---
 

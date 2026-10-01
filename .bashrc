@@ -120,6 +120,7 @@ alias sbashrc='sbrc'
 # - claude
 alias cld='claude'
 alias cldanger='claude --dangerously-skip-permissions' # --channels plugin:telegram@claude-plugins-official'
+alias cldume='claude --dangerously-skip-permissions --resume'
 
 # - shortcuts
 alias c='clear'
@@ -205,3 +206,9 @@ mkdirpop() {
 	mkdir -p -- "$1" && cd -- "$1"
 }
 alias mkcd='mkdirpop'
+
+# ---------------------------------------------------------------------------
+# machine-specific settings (work paths, extra PATH entries) go in
+# ~/.bashrc.local, which the installer never touches
+# ---------------------------------------------------------------------------
+[ -f ~/.bashrc.local ] && . ~/.bashrc.local
