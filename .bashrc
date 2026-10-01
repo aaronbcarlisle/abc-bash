@@ -118,11 +118,9 @@ alias sbrc='source ~/.bashrc && printf "%sSourced ~/.bashrc...%s\n" "$Cyan" "$Co
 alias sbashrc='sbrc'
 
 # - claude
-# default to Opus 5.5 at auto effort (the model's own default, medium on
-# Opus 5.5). The effort variable beats /effort and settings.json, so to run
-# one session at another level, launch with: CLAUDE_CODE_EFFORT_LEVEL=high cld
+# default to Opus 5.5; /model still switches it. Effort lives in abc-claude's
+# settings.json (modelSettings), so /effort keeps working
 export ANTHROPIC_MODEL="${ANTHROPIC_MODEL:-claude-opus-5-5}"
-export CLAUDE_CODE_EFFORT_LEVEL="${CLAUDE_CODE_EFFORT_LEVEL:-auto}"
 alias cld='claude'
 alias cldanger='claude --dangerously-skip-permissions' # --channels plugin:telegram@claude-plugins-official'
 alias cldume='claude --dangerously-skip-permissions --resume'
